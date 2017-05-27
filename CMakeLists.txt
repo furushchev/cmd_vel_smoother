@@ -10,10 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Boost REQUIRED COMPONENTS system)
 
 generate_dynamic_reconfigure_options(
-  cfg/CmdVelSmoother.cfg)
-
-catkin_package(
+  cfg/CmdVelSmoother.cfg
 )
+
+catkin_package()
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
@@ -25,10 +25,9 @@ target_link_libraries(cmd_vel_smoother
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
 )
+add_dependencies(cmd_vel_smoother ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_genmsg)
 
-add_dependencies(cmd_vel_smoother ${PROJECT_NAME}_gencfg)
-
-install(TARGETS cmd_vel_smoother cmd_vel_smoother
+install(TARGETS cmd_vel_smoother
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

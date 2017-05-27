@@ -22,7 +22,6 @@ class VelocitySmootherNode
   
   int interpolate_max_frame_, count_;
   double desired_rate_;
-  double decel_factor_, decel_;
   double x_acc_lim_, y_acc_lim_, yaw_acc_lim_;
   ros::Time latest_time_;
   geometry_msgs::Twist::ConstPtr latest_vel_;
@@ -38,7 +37,6 @@ public:
     x_acc_lim_ = cfg.x_acc_lim;
     y_acc_lim_ = cfg.y_acc_lim;
     yaw_acc_lim_ = cfg.yaw_acc_lim;
-    decel_factor_ = cfg.decel_factor;
     interpolate_max_frame_ = cfg.interpolate_max_frame;
 
     if(desired_rate_ != cfg.desired_rate) {
@@ -62,8 +60,8 @@ public:
     if (count_ > interpolate_max_frame_) return;
     if (latest_vel_ == NULL) return;
 
-    double past_sec = (ros::Time::now() - latest_time_).toSec();
-    if (past_sec < 1./desired_rate_) return;
+    double past_sec = (event.current_real - latest_time_).toSec();
+    if (past_sec < 1.0 / desired_rate_) return;
 
     double g_x   = std::abs(latest_vel_->linear.x  / past_sec);
     double g_y   = std::abs(latest_vel_->linear.y  / past_sec);
@@ -90,7 +88,6 @@ public:
     if (need_publish)
       pub_.publish(*pub_vel_);
     count_++;
-    decel_ *= decel_factor_;
   }
 
   VelocitySmootherNode(): nh_(), pnh_("~") {
